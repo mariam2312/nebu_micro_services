@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="/nebu_micro_services/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="nebu_micro_services">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>nebu_micro_services</title>
+  <link rel="manifest" href="manifest.json">
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    var serviceWorkerVersion = '2229129242';
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+</head>
+<body>
+  <script>
+    window.addEventListener('load', function(ev) {
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+
+// for usb.dart
+    function connectToDevice() {
+      navigator.usb.requestDevice({ filters: [{vendorId: 0x0a5f}] })
+     .then(device => {
+       console.log('Connected to device:', device);
+       console.log(device.productName); 
+       console.log(device.manufacturerName);
+      // Further communication with the USB device can be handled here
+       return device.open()
+         .then(() => device.selectConfiguration(1))
+         .then(() => device.claimInterface(0))
+         .then(() => {
+           // Send the data (ZPL commands) to the printer
+           let data = 'HELLO';
+           const dataToSend = new TextEncoder().encode("data"); // Example data encoding
+
+           return device.transferOut(1, dataToSend);
+         })
+   });
+ }
+    //for usb3
+    function printDataToUSBPrinter(data) {
+      // Code to send data to the USB printer for printing
+      // ...
+      navigator.usb.requestDevice({ filters: [{ usbVendorId: 0x0a5f }] })
+    .then(device => {
+      console.log('Connected to USB printer for printing:', device);
+      console.log(device.productName);
+      console.log(device.manufacturerName);
+
+      // Open the device and claim its interface for communication
+      return device.open()
+        .then(() => device.claimInterface(0))
+        .then(() => {
+          // Convert the data to Uint8Array or ArrayBuffer
+          const encoder = new TextEncoder();
+          const dataArray = encoder.encode(data); // Convert data to an array of bytes
+          console.log(dataArray);
+          console.log(data);
+          // Send data to the printer
+          return device.transferOut(1, data); // Use the appropriate endpoint and data
+        })
+        .catch(error => {
+          console.error('Error in further communication:', error);
+        });
+    })
+    .catch(error => {
+      console.error('Error connecting to USB printer:', error);
+    })
+
+    }
+    
+  
+    
+  </script>
+  <!-- web/index.html -->  
+ <script src="js/qz-tray.js"></script>  
+ <script src="js/qzSecurity.js"></script>
+ <!-- web/index.html --> 
+
+ <!-- jsrsasign library required for JavaScript signing. In production,download and reference a local copy!!-->
+ <script src="https://cdn.rawgit.com/kjur/jsrsasign/c057d3447b194fa0a3fdcea110579454898e093d/jsrsasign-all-min.js">
+</script>
+
+  <!-- Flutter web app script -->
+  <script src="main.dart.js" type="application/javascript"></script>
+   <!-- IMPORTANT: load pdfjs files -->
+<script
+src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.min.js"
+type="text/javascript"
+></script>
+<script type="text/javascript">
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.worker.min.js";
+pdfRenderOptions = {
+  // where cmaps are downloaded from
+  cMapUrl: "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/cmaps/",
+  // The cmaps are compressed in the case
+  cMapPacked: true,
+  // any other options for pdfjsLib.getDocument.
+  // params: {}
+};
+</script> 
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.7.570/build/pdf.js" type="text/javascript"></script>
+<script type="text/javascript">
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.7.570/build/pdf.worker.min.js";
+  pdfRenderOptions = {
+    cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.7.570/cmaps/',
+    cMapPacked: true,
+  }
+</script>
+</body>
+</html>
+    
